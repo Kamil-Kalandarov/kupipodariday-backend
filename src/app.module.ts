@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, CacheModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import * as Joi from 'joi';
+import type { ClientOpts } from 'redis';
+import * as redisStore from 'cache-manager-redis-store';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { AppService } from './app.service';
@@ -31,6 +33,11 @@ const shcema = Joi.object({
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useClass: AppService,
+    }),
+    CacheModule.register<ClientOpts>({
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
     }),
     WinstonModule.forRoot({
       levels: {

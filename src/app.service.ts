@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { LogEntry, Logger } from 'winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class AppService implements TypeOrmOptionsFactory {
@@ -11,7 +11,7 @@ export class AppService implements TypeOrmOptionsFactory {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
   createTypeOrmOptions() {
-    this.logger.log('Creating a user');
+    /* this.logger.log('Creating a user'); */
     return this.configService.get('database');
   }
   getHello(): string {
