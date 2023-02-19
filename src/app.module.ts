@@ -34,10 +34,14 @@ const shcema = Joi.object({
       imports: [ConfigModule],
       useClass: AppService,
     }),
-    CacheModule.register<ClientOpts>({
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
+    CacheModule.registerAsync<ClientOpts>({
+      useFactory: async () => {
+        return {
+          store: redisStore,
+          host: 'localhost',
+          port: 6379,
+        };
+      },
     }),
     WinstonModule.forRoot({
       levels: {

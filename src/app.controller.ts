@@ -10,11 +10,14 @@ export class AppController {
   ) {}
 
   @Get()
-  async getHello() {
+  async getHello(): Promise<any> {
     const someValue = this.appService.getHello();
     await this.cache.get(someValue);
     if (someValue) {
-      return someValue;
+      return {
+        data: someValue,
+        FromRedis: 'this is from Redis cache',
+      };
     }
     const result = this.appService.getHello();
     await this.cache.set(result, { ttl: 1000 });
