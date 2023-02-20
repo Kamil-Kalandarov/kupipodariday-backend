@@ -1,11 +1,13 @@
 import { Module, CacheModule } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import * as Joi from 'joi';
 import type { ClientOpts } from 'redis';
-import * as redisStore from 'cache-manager-redis-store';
+import redisStore from 'cache-manager-redis-store';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { AppService } from './app.service';
@@ -56,6 +58,10 @@ const shcema = Joi.object({
         new winston.transports.File({ filename: 'error.log', level: 'error' }),
       ],
     }),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
+    }),
     /* TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -69,6 +75,6 @@ const shcema = Joi.object({
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provider: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
