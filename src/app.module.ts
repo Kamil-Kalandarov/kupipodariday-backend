@@ -62,19 +62,9 @@ const shcema = Joi.object({
       ttl: 60,
       limit: 10,
     }),
-    /* TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'student',
-      password: 'student',
-      database: 'kupipodariday',
-      entities: [],
-      synchronize: true,
-    }), */
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, { provider: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

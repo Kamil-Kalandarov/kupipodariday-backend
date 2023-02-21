@@ -11,7 +11,7 @@ export class AppService implements TypeOrmOptionsFactory {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
   createTypeOrmOptions() {
-    /* this.logger.log('Creating a user'); */
+    this.logger.log('debug', 'application stated');
     return this.configService.get('database');
   }
   getHello(): string {

@@ -13,8 +13,8 @@ async function bootstrap() {
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   const configService = app.get(ConfigService);
   const port = configService.get('port');
-  app.use(helmet());
   app.use(csurf());
+  app.use(helmet());
   await app.listen(port);
 }
 bootstrap();
