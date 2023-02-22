@@ -11,10 +11,10 @@ export class AppService implements TypeOrmOptionsFactory {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
   createTypeOrmOptions() {
-    this.logger.log('debug', 'application stated');
     return this.configService.get('database');
   }
   getHello(): string {
+    this.logger.log('info', 'I get hello');
     return 'Hello Nest.Js';
   }
 }

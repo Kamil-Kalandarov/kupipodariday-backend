@@ -27,15 +27,27 @@ const shcema = Joi.object({
 
 @Module({
   imports: [
+    /* 
+      получение данныйх из файла конфигурации для App 
+      делаем его глобальным
+      присваиваем схему для данных подлкючения к БД
+    */
     ConfigModule.forRoot({
       load: [configuration],
       isGlobal: true,
       validationSchema: shcema,
     }),
+    /* 
+      ПОДКЛЮЧЕНИЕ БД К ПРИЛОЖЕНЮ 
+      (используется forRootAsync для того чтобы первым загрузилось приложение, а только потом БД)
+      передаем AppService для получения данных для подключения к БД
+      импорт ConfigModule, так как AppService зависит от него
+    */
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useClass: AppService,
     }),
+    /* ПОДКЛЮЧЕНИЕ БД-REDIS ДЛЯ ХРАНЕНИЯ КЭША */
     CacheModule.registerAsync<ClientOpts>({
       useFactory: async () => {
         return {
@@ -45,6 +57,7 @@ const shcema = Joi.object({
         };
       },
     }),
+    /* НАСТРОЙКИ ПРИОРИТЕТА ДЛЯ ЛОЕГГЕРА WINSTON */
     WinstonModule.forRoot({
       levels: {
         critical_error: 0,
@@ -56,15 +69,17 @@ const shcema = Joi.object({
       transports: [
         new winston.transports.Console({ format: winston.format.simple() }),
         new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'request.log' }),
       ],
     }),
-    ThrottlerModule.forRoot({
+    /* ЗАЩИТА ОТ DDOS АТАК (ограничение косличества запросов до 10 в минуту) */
+    /* ThrottlerModule.forRoot({
       ttl: 60,
       limit: 10,
-    }),
+    }), */
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [AppService],
 })
 export class AppModule {}

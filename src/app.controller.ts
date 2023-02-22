@@ -9,16 +9,13 @@ export class AppController {
     @Inject(CACHE_MANAGER) private cache: Cache,
   ) {}
 
-  /* getCacheKey(someString: string) {
-    return someString;
-  } */
   @Header('Cache-Control', 'no-cache, max-age=86400')
   @Get()
   async getHello(): Promise<any> {
+    /* нужно получить уникальный ключ, так как кэш смотрим на ключи, а не на результат вызова функции */
     const cacheKey = 'hello1';
     const cachedData = await this.cache.get(cacheKey);
     if (cachedData) {
-      console.log('checking cache');
       return {
         data: cachedData,
         FromRedis: 'this is loaded from redis cache',
@@ -26,7 +23,6 @@ export class AppController {
     } else {
       const result = this.appService.getHello();
       await this.cache.set(cacheKey, result, 10000);
-      console.log('this is new cache');
       return result;
     }
   }
