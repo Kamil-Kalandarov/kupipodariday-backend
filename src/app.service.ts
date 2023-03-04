@@ -10,6 +10,7 @@ export class AppService implements TypeOrmOptionsFactory {
     private readonly configService: ConfigService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
+  /* получение объекта database из файла configuration.ts, для дальнейшей передачи его TypeOrmModule в app.module.ts */
   createTypeOrmOptions() {
     return this.configService.get('database');
   }

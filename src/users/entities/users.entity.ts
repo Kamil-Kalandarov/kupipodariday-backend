@@ -4,7 +4,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Offer } from '../../offers/entities/offers.entity';
+import { Wish } from '../../wishes/entities/wishes.entity';
+import { WishList } from '../../wishlists/entities/wishList.entity';
 
 @Entity()
 export class User {
@@ -40,4 +44,13 @@ export class User {
   @Column()
   @IsNotEmpty()
   password: string;
+
+  @OneToMany(() => Wish, (wish) => wish.owner)
+  wishes: Wish[];
+
+  @OneToMany(() => Offer, (offer) => offer.user)
+  offers: Offer[];
+
+  @OneToMany(() => WishList, (wishlist) => wishlist.owner)
+  wishlists: WishList[];
 }

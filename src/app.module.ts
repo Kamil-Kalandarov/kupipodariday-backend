@@ -12,6 +12,12 @@ import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { AppService } from './app.service';
 import configuration from './configuration';
+import { WishesModule } from './wishes/wishes.module';
+import { OffersModule } from './offers/offers.module';
+import { WishlistsModule } from './wishlists/wishlists.module';
+import { HashModule } from './hash/hash.module';
+import { AuthModule } from './auth/auth.module';
+import { TokenModule } from './auth/token/token.module';
 
 const shcema = Joi.object({
   port: Joi.number().integer().default(3000),
@@ -47,6 +53,13 @@ const shcema = Joi.object({
       imports: [ConfigModule],
       useClass: AppService,
     }),
+    UsersModule,
+    WishesModule,
+    OffersModule,
+    WishlistsModule,
+    HashModule,
+    AuthModule,
+    TokenModule,
     /* ПОДКЛЮЧЕНИЕ БД-REDIS ДЛЯ ХРАНЕНИЯ КЭША */
     CacheModule.registerAsync<ClientOpts>({
       useFactory: async () => {
@@ -73,13 +86,12 @@ const shcema = Joi.object({
       ],
     }),
     /* ЗАЩИТА ОТ DDOS АТАК (ограничение косличества запросов до 10 в минуту) */
-    /* ThrottlerModule.forRoot({
+    ThrottlerModule.forRoot({
       ttl: 60,
       limit: 10,
-    }), */
-    UsersModule,
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
