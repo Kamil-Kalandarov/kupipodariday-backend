@@ -10,7 +10,7 @@ import { JwtStartegy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [UsersModule, HashModule, TokenModule, PassportModule, JwtModule],
+  imports: [UsersModule, HashModule, TokenModule, PassportModule],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStartegy],
 })

@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { ConflictException } from '@nestjs/common';
 import { User } from './entities/users.entity';
 import { HashService } from '../hash/hash.service';
-import { CreateUserDto } from './dto/CreateUser.dto';
+import { CreateUserDto } from './dto/createUser.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class UsersService {
@@ -43,11 +44,19 @@ export class UsersService {
     return user;
   }
 
+  async updateUser(id: number, updateUderDto: UpdateUserDto) {
+    if (updateUderDto.password) {
+      updateUderDto.password = await this.hashService.hashPassord(
+        updateUderDto.password,
+      );
+    }
+    return await this.userRepository.update({ id }, updateUderDto);
+  }
+
+  /* async getOwnWished(id: number) */
+
   /* async findOne(query: FindOneOptions<User>) {
     const user = await this.userRepository.findOne(query);
     return user;
   } */
-  async test() {
-    return true;
-  }
 }

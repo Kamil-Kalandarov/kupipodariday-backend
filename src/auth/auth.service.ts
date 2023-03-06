@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HashService } from 'src/hash/hash.service';
-import { CreateUserDto } from '../users/dto/CreateUser.dto';
+import { CreateUserDto } from '../users/dto/createUser.dto';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/Login.dto';
@@ -15,15 +15,11 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  /* auth(user: User) {
-    return this.
-  } */
-
   async registerUser(createUserDto: CreateUserDto): Promise<User> {
     return this.userService.createUser(createUserDto);
   }
 
-  async validateUser(loginDto: LoginDto): Promise<AuthUserresponse> {
+  async login(loginDto: LoginDto): Promise<AuthUserresponse> {
     const existUser = await this.userService.findUserByEmail(loginDto.email);
     if (!existUser) {
       throw new UnauthorizedException('Неправильные почта или пароль');
@@ -35,7 +31,12 @@ export class AuthService {
     if (!isPasswordValide) {
       throw new UnauthorizedException('Неправильные почта или пароль');
     }
-    const token = await this.tokenService.generateToken(loginDto.email);
+    const userData = {
+      id: existUser.id,
+      username: existUser.username,
+      email: existUser.email,
+    };
+    const token = await this.tokenService.generateToken(userData);
     return { ...existUser, token };
   }
 

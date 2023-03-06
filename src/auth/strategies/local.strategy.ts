@@ -3,7 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { LoginDto } from '../dto/Login.dto';
-import { User } from '../../users/entities/users.entity';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -12,7 +11,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(loginDto: LoginDto) {
-    const user = await this.authService.validateUser(loginDto);
+    const user = await this.authService.login(loginDto);
     if (!user) {
       throw new UnauthorizedException('Неправильные почта или пароль');
     }

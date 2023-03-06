@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from '../users/dto/CreateUser.dto';
+import { CreateUserDto } from '../users/dto/createUser.dto';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/users.entity';
 import { LoginDto } from './dto/Login.dto';
@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthUserresponse } from './response/authUserresponse';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(
     private readonly userService: UsersService,
@@ -15,13 +15,17 @@ export class AuthController {
   ) {}
 
   @Post('signup')
-  registerUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.createUser(createUserDto);
+  async registerUser(@Body() createUserDto: CreateUserDto) {
+    const user = await this.userService.createUser(createUserDto);
+    delete user.password;
+    return user;
   }
 
   @UseGuards(LocalStrategy)
   @Post('signin')
-  login(@Body() loginDto: LoginDto): Promise<AuthUserresponse> {
-    return this.authService.validateUser(loginDto);
+  async login(@Body() loginDto: LoginDto): Promise<AuthUserresponse> {
+    const user = await this.authService.login(loginDto);
+    delete user.password;
+    return user;
   }
 }

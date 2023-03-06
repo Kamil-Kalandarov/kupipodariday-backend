@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsUrl, Length } from 'class-validator';
 import {
   Entity,
@@ -43,6 +44,7 @@ export class User {
 
   @Column()
   @IsNotEmpty()
+  @Exclude()
   password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)
