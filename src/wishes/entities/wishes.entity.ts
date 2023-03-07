@@ -27,11 +27,9 @@ export class Wish {
   name: string;
 
   @Column()
-  @IsNotEmpty()
   link: string;
 
   @Column()
-  @IsNotEmpty()
   @IsUrl()
   image: string;
 
@@ -39,8 +37,10 @@ export class Wish {
   @IsNotEmpty()
   price: number;
 
-  @Column()
-  @IsNotEmpty()
+  @Column({
+    scale: 2,
+    default: 0,
+  })
   raised: number;
 
   @ManyToOne(() => User, (user) => user.wishes)
@@ -52,4 +52,10 @@ export class Wish {
 
   @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];
+
+  @Column({
+    scale: 0,
+    default: 0,
+  })
+  copied: number;
 }

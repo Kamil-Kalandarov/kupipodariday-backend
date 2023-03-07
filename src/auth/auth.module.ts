@@ -7,7 +7,6 @@ import { HashModule } from '../hash/hash.module';
 import { TokenModule } from './token/token.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStartegy } from './strategies/jwt.strategy';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [UsersModule, HashModule, TokenModule, PassportModule],

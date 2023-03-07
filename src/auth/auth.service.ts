@@ -4,7 +4,6 @@ import { CreateUserDto } from '../users/dto/createUser.dto';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/Login.dto';
-import { AuthUserresponse } from './response/authUserresponse';
 import { TokenService } from './token/token.service';
 
 @Injectable()
@@ -19,8 +18,10 @@ export class AuthService {
     return this.userService.createUser(createUserDto);
   }
 
-  async login(loginDto: LoginDto): Promise<AuthUserresponse> {
-    const existUser = await this.userService.findUserByEmail(loginDto.email);
+  async login(loginDto: LoginDto) {
+    const existUser = await this.userService.findUserByUserName(
+      loginDto.username,
+    );
     if (!existUser) {
       throw new UnauthorizedException('Неправильные почта или пароль');
     }
@@ -36,11 +37,7 @@ export class AuthService {
       username: existUser.username,
       email: existUser.email,
     };
-    const token = await this.tokenService.generateToken(userData);
-    return { ...existUser, token };
+    const access_token = await this.tokenService.generateToken(userData);
+    return { access_token };
   }
-
-  /* async login(user: User) {
-    
-  } */
 }

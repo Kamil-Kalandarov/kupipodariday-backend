@@ -3,8 +3,10 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class HashService {
-  async hashPassord(password) {
-    return bcrypt.hash(password, 10);
+  async hashPassord(password: string) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(hashedPassword);
+    return hashedPassword;
   }
 
   async validatePassword(password: string, userPasswordHash: string) {
