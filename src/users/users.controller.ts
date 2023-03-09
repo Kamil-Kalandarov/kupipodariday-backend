@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -9,7 +10,8 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { WishesService } from 'src/wishes/wishes.service';
+import { Wish } from '../wishes/entities/wishes.entity';
+import { WishesService } from '../wishes/wishes.service';
 import { JwtGuard } from '../auth/guards/jwtGuard';
 import { userRequestType } from '../utils/userRequestType';
 import { FindUserDto } from './dto/findUser.dto';
@@ -37,35 +39,34 @@ export class UsersController {
   @Get(':username')
   async getUserByName(@Param('username') username: string): Promise<User> {
     const user = await this.userService.findUserByUserName(username);
-    delete user.password;
     return user;
   }
 
-  /* @Get('me/wishes')
-  async getOwnWishes(@Req() request) {
+  @Get('me/wishes')
+  async getOwnWishes(@Req() request): Promise<Wish[]> {
     const user = await this.userService.findUserByUserName(
       request.user.username,
     );
+    delete user.password;
     return this.wisheService.getWishes(user.id);
-  } */
-
-  @Patch('me')
-  async updateUser(
-    @Body() updateUserDto: UpdateUserDto,
-    @Req() request: userRequestType,
-  ): Promise<UpdateUserDto> {
-    const userId = request.user.id;
-    await this.userService.updateUser(userId, updateUserDto);
-    delete updateUserDto.password;
-    return updateUserDto;
   }
 
-  /* @Get(':username/wishes')
-  async getSomeUserWishes(@Param('username') username: string) {
+  @Patch('me')
+  updateUser(
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() request: userRequestType,
+  ): Promise<User> {
+    const userId = request.user.id;
+    return this.userService.updateUser(userId, updateUserDto);
+  }
+
+  @Get(':username/wishes')
+  async getSomeUserWishes(
+    @Param('username') username: string,
+  ): Promise<Wish[]> {
     const user = await this.userService.findUserByUserName(username);
-    console.log(user);
     return this.wisheService.getWishes(user.id);
-  } */
+  }
 
   @Post('find')
   findByNamerOrEmail(@Body() findUserDto: FindUserDto): Promise<User> {

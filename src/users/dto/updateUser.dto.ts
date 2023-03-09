@@ -16,7 +16,7 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @Length(2, 200)
-  about?: string;
+  about: string;
 
   @IsOptional()
   @IsString()

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -11,6 +12,7 @@ import {
 import { JwtGuard } from '../auth/guards/jwtGuard';
 import { CreateWishDto } from './dto/createWish.dto';
 import { UpdateWishDto } from './dto/updateWishe.dto';
+import { Wish } from './entities/wishes.entity';
 import { WishesService } from './wishes.service';
 
 @UseGuards(JwtGuard)
@@ -19,22 +21,25 @@ export class WishesController {
   constructor(private readonly wishService: WishesService) {}
 
   @Post()
-  create(@Body() createWishDto: CreateWishDto) {
-    return this.wishService.createWish(createWishDto);
+  async create(
+    @Body() createWishDto: CreateWishDto,
+    @Req() request,
+  ): Promise<Wish> {
+    return this.wishService.createWish(createWishDto, request.user);
   }
 
   @Get('last')
-  getLastWishes() {
+  getLastWishes(): Promise<Wish[]> {
     return this.wishService.findLastWishes();
   }
 
   @Get('top')
-  getTopWishes() {
+  getTopWishes(): Promise<Wish[]> {
     return this.wishService.findTopWishes();
   }
 
   @Get(':id')
-  getWishById(@Param('id') id: number) {
+  getWishById(@Param('id') id: number): Promise<Wish> {
     return this.wishService.findWisheById(id);
   }
 
@@ -43,7 +48,12 @@ export class WishesController {
     @Param('id') id: number,
     @Req() request,
     @Body() updateWishDto: UpdateWishDto,
-  ) {
+  ): Promise<Wish> {
     return this.wishService.updateWish(id, request.user.id, updateWishDto);
+  }
+
+  @Delete(':id')
+  deleteWish(@Param('id') id: number, @Req() request) {
+    return this.wishService.deleteWish(id, request.user.id);
   }
 }

@@ -1,12 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ConflictException } from '@nestjs/common';
 import { User } from './entities/users.entity';
 import { HashService } from '../hash/hash.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
-import { FindUserDto } from './dto/findUser.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +22,6 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('Такого пользователя не существует');
     }
-    delete user.email;
     return user;
   }
 
@@ -31,6 +29,9 @@ export class UsersService {
     const user = await this.userRepository.findOne({
       where: [{ email: query }, { username: query }],
     });
+    if (!user) {
+      throw new NotFoundException('Такого пользователя не существует');
+    }
     return user;
   }
 
@@ -59,13 +60,29 @@ export class UsersService {
     }
   }
 
-  async updateUser(id: number, updateUderDto: UpdateUserDto) {
+  async updateUser(id: number, updateUderDto: UpdateUserDto): Promise<User> {
+    const exist = await this.userRepository.findOne({
+      where: [
+        { email: updateUderDto.email },
+        { username: updateUderDto.username },
+      ],
+    });
+    if (
+      updateUderDto.email === exist.email ||
+      updateUderDto.username === exist.username
+    ) {
+      throw new ConflictException('пользователь уже есть');
+    }
     if (updateUderDto.password) {
       updateUderDto.password = await this.hashService.hashPassord(
         updateUderDto.password,
       );
     }
-    return await this.userRepository.update({ id }, updateUderDto);
+    await this.userRepository.update(id, updateUderDto);
+    const updatedUser = await this.userRepository.findOne({
+      where: { id: id },
+    });
+    return updatedUser;
   }
 
   /* async getWishes(id: number) {

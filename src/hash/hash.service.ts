@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 export class HashService {
   async hashPassord(password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
     return hashedPassword;
   }
 
