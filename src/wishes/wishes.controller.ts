@@ -51,6 +51,11 @@ export class WishesController {
     if (request.user.id !== wish.owner.id) {
       throw new ForbiddenException('Вы не можете редактировать чужой подарок');
     }
+    if (wish.raised !== 0 && updateWishDto.price) {
+      throw new ForbiddenException(
+        'Изменить стоимость невозможно, так как уже есть желащие внести деньги',
+      );
+    }
     return this.wishService.updateWish(id, updateWishDto);
   }
 
