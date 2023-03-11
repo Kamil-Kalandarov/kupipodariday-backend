@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -40,7 +39,7 @@ export class WishesService {
         offers: true,
       },
       order: { id: 'DESC' },
-      take: 15,
+      take: 40,
     });
     return wishes;
   }
@@ -52,7 +51,7 @@ export class WishesService {
         offers: true,
       },
       order: { id: 'DESC' },
-      take: 15,
+      take: 20,
     });
     return wishes;
   }
@@ -111,5 +110,9 @@ export class WishesService {
       owner,
     });
     return clonedWish;
+  }
+
+  findWIshes(query): Promise<Wish[]> {
+    return this.wishRepositiry.find(query);
   }
 }

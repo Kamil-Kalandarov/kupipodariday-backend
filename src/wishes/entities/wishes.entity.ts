@@ -1,4 +1,4 @@
-import { IsString, IsUrl, Length } from 'class-validator';
+import { IsOptional, IsString, IsUrl, Length } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -23,6 +23,7 @@ export class Wish {
   updatedAt: Date;
 
   @Column()
+  @IsString()
   @Length(1, 250)
   name: string;
 

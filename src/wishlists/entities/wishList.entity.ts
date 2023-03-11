@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUrl, Length } from 'class-validator';
+import { IsString, IsUrl, Length } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,6 +7,7 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Wish } from '../../wishes/entities/wishes.entity';
@@ -19,25 +20,18 @@ export class WishList {
   @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @Column()
-  @IsNotEmpty()
   @Length(1, 250)
   name: string;
 
   @Column()
-  @IsNotEmpty()
-  @Length(1, 1500)
-  description: string;
-
-  @Column()
-  @IsNotEmpty()
   @IsUrl()
   image: string;
 
-  @ManyToOne(() => User, (user) => user.wishlists)
+  @ManyToOne(() => User, (user) => user.id)
   owner: User;
 
   @ManyToMany(() => Wish)

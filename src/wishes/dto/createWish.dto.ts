@@ -1,11 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString, IsUrl, Length } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl, Length } from 'class-validator';
 
 export class CreateWishDto {
-  @IsNotEmpty()
+  @IsString()
   @Length(1, 250)
   name: string;
 
-  @IsNotEmpty()
   @IsUrl()
   link: string;
 
@@ -13,7 +12,6 @@ export class CreateWishDto {
   image: string;
 
   @IsNotEmpty()
-  @IsNumber()
   price: number;
 
   @IsString()

@@ -16,11 +16,11 @@ import { UpdateWishDto } from './dto/updateWishe.dto';
 import { Wish } from './entities/wishes.entity';
 import { WishesService } from './wishes.service';
 
-@UseGuards(JwtGuard)
 @Controller('wishes')
 export class WishesController {
   constructor(private readonly wishService: WishesService) {}
 
+  @UseGuards(JwtGuard)
   @Post()
   create(@Body() createWishDto: CreateWishDto, @Req() request): Promise<Wish> {
     return this.wishService.createWish(createWishDto, request.user);
@@ -36,11 +36,13 @@ export class WishesController {
     return this.wishService.findTopWishes();
   }
 
+  @UseGuards(JwtGuard)
   @Get(':id')
   getWishById(@Param('id') id: number): Promise<Wish> {
     return this.wishService.findWisheById(id);
   }
 
+  @UseGuards(JwtGuard)
   @Patch(':id')
   async updateWish(
     @Param('id') id: number,
@@ -59,11 +61,13 @@ export class WishesController {
     return this.wishService.updateWish(id, updateWishDto);
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':id')
   deleteWish(@Param('id') id: number, @Req() request) {
     return this.wishService.deleteWish(id, request.user.id);
   }
 
+  @UseGuards(JwtGuard)
   @Post(':id/copy')
   addToOwnWishList(@Param('id') id: number, @Req() request): Promise<Wish> {
     return this.wishService.addToOwnWishList(id, request.user);
