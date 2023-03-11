@@ -4,7 +4,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import * as etag from 'etag';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import * as csurf from 'csurf';
 import * as session from 'express-session';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -32,8 +31,6 @@ async function bootstrap() {
       saveUninitialized: false,
     }),
   );
-  /* защита от CSRF-атак */
-  /* app.use(csurf()); */
   /* CORS, CSP и др. заголовки */
   app.use(helmet());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));

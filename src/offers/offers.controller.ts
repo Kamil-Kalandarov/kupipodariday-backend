@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwtGuard';
-import { User } from '../users/entities/users.entity';
 import { Offer } from './entities/offers.entity';
 import { CreateOfferDto } from './dto/createOffer.dto';
 import { OffersService } from './offers.service';

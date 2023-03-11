@@ -1,4 +1,4 @@
-import { IsString, IsUrl, Length } from 'class-validator';
+import { IsUrl, Length } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
