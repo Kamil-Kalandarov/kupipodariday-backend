@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUrl, Length } from 'class-validator';
+import { IsString, IsUrl, Length } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   OneToMany,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Offer } from '../../offers/entities/offers.entity';
@@ -18,15 +19,15 @@ export class Wish {
   @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ unique: true })
-  @IsNotEmpty()
+  @Column()
   @Length(1, 250)
   name: string;
 
   @Column()
+  @IsUrl()
   link: string;
 
   @Column()
@@ -34,7 +35,6 @@ export class Wish {
   image: string;
 
   @Column('numeric', { scale: 2 })
-  @IsNotEmpty()
   price: number;
 
   @Column({
@@ -46,7 +46,8 @@ export class Wish {
   @ManyToOne(() => User, (user) => user.wishes)
   owner: User;
 
-  @IsNotEmpty()
+  @Column()
+  @IsString()
   @Length(1, 1024)
   description: string;
 

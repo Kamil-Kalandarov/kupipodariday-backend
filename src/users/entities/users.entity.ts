@@ -6,6 +6,7 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Offer } from '../../offers/entities/offers.entity';
 import { Wish } from '../../wishes/entities/wishes.entity';
@@ -19,7 +20,7 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @Column({ unique: true })
@@ -28,12 +29,10 @@ export class User {
   username: string;
 
   @Column({ default: 'Пока ничего не рассказал о себе' })
-  @IsNotEmpty()
   @Length(2, 200)
   about: string;
 
   @Column({ default: 'https://i.pravatar.cc/300' })
-  @IsNotEmpty()
   @IsUrl()
   avatar: string;
 

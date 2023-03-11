@@ -1,11 +1,10 @@
-import { IsNotEmpty } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  ManyToMany,
   ManyToOne,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Wish } from '../../wishes/entities/wishes.entity';
@@ -18,21 +17,18 @@ export class Offer {
   @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
-  @IsNotEmpty()
-  @ManyToMany(() => User, (user) => user.id)
-  user: string;
+  @ManyToOne(() => User, (user) => user.offers)
+  user: User;
 
   @ManyToOne(() => Wish, (wish) => wish.offers)
   item: Wish;
 
   @Column('numeric', { scale: 2 })
-  @IsNotEmpty()
-  amount: string;
+  amount: number;
 
   @Column({ default: false })
-  hodden: boolean;
+  hidden: boolean;
 }

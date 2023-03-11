@@ -14,7 +14,6 @@ export class UpdateWishDto {
   @IsOptional()
   image: string;
 
-  @IsNumber()
   @IsOptional()
   price: number;
 

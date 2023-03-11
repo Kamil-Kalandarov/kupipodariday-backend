@@ -61,17 +61,19 @@ export class UsersService {
   }
 
   async updateUser(id: number, updateUderDto: UpdateUserDto): Promise<User> {
-    const exist = await this.userRepository.findOne({
-      where: [
-        { email: updateUderDto.email },
-        { username: updateUderDto.username },
-      ],
+    const user = await this.userRepository.findOne({
+      where: { id: id },
     });
-    if (
-      updateUderDto.email === exist.email ||
-      updateUderDto.username === exist.username
-    ) {
-      throw new ConflictException('пользователь уже есть');
+    if (updateUderDto.email || updateUderDto.username) {
+      const exist = await this.userRepository.findOne({
+        where: [
+          { email: updateUderDto.email },
+          { username: updateUderDto.username },
+        ],
+      });
+      if (exist && user.id !== id) {
+        throw new ConflictException('пользователь уже есть');
+      }
     }
     if (updateUderDto.password) {
       updateUderDto.password = await this.hashService.hashPassord(

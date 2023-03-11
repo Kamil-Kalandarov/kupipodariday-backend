@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -21,10 +22,7 @@ export class WishesController {
   constructor(private readonly wishService: WishesService) {}
 
   @Post()
-  async create(
-    @Body() createWishDto: CreateWishDto,
-    @Req() request,
-  ): Promise<Wish> {
+  create(@Body() createWishDto: CreateWishDto, @Req() request): Promise<Wish> {
     return this.wishService.createWish(createWishDto, request.user);
   }
 
@@ -44,16 +42,25 @@ export class WishesController {
   }
 
   @Patch(':id')
-  updateWish(
+  async updateWish(
     @Param('id') id: number,
     @Req() request,
     @Body() updateWishDto: UpdateWishDto,
   ): Promise<Wish> {
-    return this.wishService.updateWish(id, request.user.id, updateWishDto);
+    const wish = await this.wishService.findWisheById(id);
+    if (request.user.id !== wish.owner.id) {
+      throw new ForbiddenException('Вы не можете редактировать чужой подарок');
+    }
+    return this.wishService.updateWish(id, updateWishDto);
   }
 
   @Delete(':id')
   deleteWish(@Param('id') id: number, @Req() request) {
     return this.wishService.deleteWish(id, request.user.id);
+  }
+
+  @Post(':id/copy')
+  addToOwnWishList(@Param('id') id: number, @Req() request): Promise<Wish> {
+    return this.wishService.addToOwnWishList(id, request.user);
   }
 }

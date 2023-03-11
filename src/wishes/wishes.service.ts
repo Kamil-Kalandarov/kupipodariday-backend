@@ -18,7 +18,7 @@ export class WishesService {
     private readonly wishRepositiry: Repository<Wish>,
   ) {}
 
-  async getWishes(userId: number) {
+  async getWishes(userId: number): Promise<Wish[]> {
     const userWishes = await this.wishRepositiry.find({
       where: { owner: { id: userId } },
       relations: {
@@ -29,23 +29,8 @@ export class WishesService {
     return userWishes;
   }
 
-  async IsWishNameExist(name: string): Promise<Wish> {
-    const wish = await this.wishRepositiry.findOne({
-      where: { name: name },
-    });
-    return wish;
-  }
-
   async createWish(createWishDto: CreateWishDto, owner: User): Promise<Wish> {
-    const oldWishName = await this.IsWishNameExist(createWishDto.name);
-    if (oldWishName) {
-      throw new ConflictException('Подарок с таким названием уже есть');
-    }
-    const newWish = await this.wishRepositiry.create({
-      ...createWishDto,
-      owner,
-    });
-    return this.wishRepositiry.save(newWish);
+    return this.wishRepositiry.save({ ...createWishDto, owner });
   }
 
   async findLastWishes(): Promise<Wish[]> {
@@ -86,19 +71,45 @@ export class WishesService {
     return wish;
   }
 
-  async updateWish(id: number, userId: number, updateWishDto: UpdateWishDto) {
+  async updateWish(id: number, updateWishDto: UpdateWishDto) {
     const wish = await this.findWisheById(id);
-    if (userId !== wish.owner.id) {
-      throw new ForbiddenException('Вы не можете редактировать чужой подарок');
-    }
     return this.wishRepositiry.save({ ...wish, ...updateWishDto });
   }
 
   async deleteWish(id: number, userId: number) {
     const wish = await this.findWisheById(id);
+    if (!wish) {
+      throw new NotFoundException('Подарка с таким id не существует');
+    }
     if (wish.owner.id !== userId) {
       throw new ForbiddenException('Вы не можете удалять чужой подарок');
     }
-    return this.wishRepositiry.delete(id);
+    if (wish.offers.length !== 0) {
+      throw new ForbiddenException(
+        'Удалять подарок, на который уже внесли деньги другие пользователи нельзя',
+      );
+    }
+    await this.wishRepositiry.delete(id);
+    return wish;
+  }
+
+  async addToOwnWishList(id: number, owner: User): Promise<Wish> {
+    const wish = await this.findWisheById(id);
+    if (!wish) {
+      throw new NotFoundException('Подарка с таким id не существует');
+    }
+    const clonedWishDto = {
+      name: wish.name,
+      link: wish.link,
+      image: wish.image,
+      price: wish.price,
+      description: wish.description,
+      copied: wish.copied + 1,
+    };
+    const clonedWish = await this.wishRepositiry.save({
+      ...clonedWishDto,
+      owner,
+    });
+    return clonedWish;
   }
 }

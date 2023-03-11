@@ -88,7 +88,7 @@ const shcema = Joi.object({
     /* ЗАЩИТА ОТ DDOS АТАК (ограничение косличества запросов до 10 в минуту) */
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 10,
+      limit: 100,
     }),
   ],
   controllers: [AppController],
